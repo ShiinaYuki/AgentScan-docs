@@ -2,31 +2,22 @@ import { StrictMode, useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
 import { createRoot } from 'react-dom/client'
 import {
-  Activity,
   ArrowRight,
-  Boxes,
   Check,
-  ChevronRight,
   CircleAlert,
-  Code2,
   Download,
   ExternalLink,
   FileArchive,
   FileCode2,
   FolderOpen,
   GitBranch,
-  GitFork,
-  LayoutDashboard,
   Menu,
   Network,
   Play,
-  Radar,
-  Route,
   Search,
-  ShieldAlert,
   ShieldCheck,
-  TriangleAlert,
   X,
+  ZoomIn,
 } from 'lucide-react'
 import './style.css'
 
@@ -250,57 +241,32 @@ function AgentScanWordmark() {
 }
 
 function ProductPreview() {
-  return <figure className="product-preview" aria-label="AgentScan 报告示例">
-    <div className="preview-app-shell">
-      <div className="preview-app-sidebar" aria-hidden="true">
-        <div className="preview-app-brand"><i><Radar size={14} /></i><span><strong>AgentScan</strong><small>Security Analysis</small></span></div>
-        <small className="preview-nav-label">WORKSPACE</small>
-        <div className="preview-app-nav">
-          <span className="selected"><LayoutDashboard size={13} />总览</span>
-          <span><GitFork size={13} />调用与依赖图</span>
-          <span><Boxes size={13} />AgentBOM <b>4</b></span>
-          <span><ShieldAlert size={13} />风险发现 <b>11</b></span>
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const screenshot = '/agentscan-report.png'
+  const description = 'AgentScan 实际扫描报告：MCP 示例项目的风险摘要、AgentBOM 组件、调用图关系和优先风险'
+
+  return <>
+    <figure className="product-preview">
+      <button className="preview-image-trigger" type="button" aria-label="放大查看 AgentScan 扫描报告" title="放大查看报告" onClick={() => dialogRef.current?.showModal()}>
+        <img src={screenshot} width={3600} height={2220} alt={description} fetchPriority="high" />
+        <span className="preview-zoom-icon" aria-hidden="true"><ZoomIn size={18} /></span>
+      </button>
+    </figure>
+    <dialog className="preview-dialog" ref={dialogRef} aria-label="AgentScan 扫描报告原图" onClick={(event) => {
+      if (event.target === event.currentTarget) dialogRef.current?.close()
+    }}>
+      <div className="preview-dialog-content">
+        <header className="preview-dialog-header">
+          <strong>AgentScan 扫描报告</strong>
+          <a href={screenshot} target="_blank" rel="noreferrer" aria-label="在新标签页打开原图" title="打开原图"><ExternalLink size={18} /></a>
+          <button type="button" aria-label="关闭报告图片" title="关闭" onClick={() => dialogRef.current?.close()}><X size={20} /></button>
+        </header>
+        <div className="preview-image-scroll" tabIndex={0} role="region" aria-label="报告图片">
+          <img src={screenshot} width={3600} height={2220} alt={description} />
         </div>
       </div>
-      <div className="preview-app-main">
-        <div className="preview-app-topbar">
-          <span><small>SECURITY POSTURE</small><strong>项目安全总览</strong></span>
-          <i />
-          <span className="preview-app-target">langchain-risk / langchain</span>
-          <button type="button" tabIndex={-1}>重新扫描</button>
-        </div>
-        <div className="preview-app-content">
-          <section className="preview-posture">
-            <div className="preview-posture-copy">
-              <div className="preview-posture-heading"><span><ShieldAlert size={14} /></span><strong>发现需要优先处理的风险</strong></div>
-              <p>本次分析识别到 9 项严重或高危风险。优先查看可到达的高风险能力与对应风险详情。</p>
-              <div className="preview-posture-meta"><span><Code2 size={11} />langchain-risk</span><span><Activity size={11} />20 秒</span><span><FileCode2 size={11} />1 个模块</span></div>
-            </div>
-            <div className="preview-risk-map">
-              <div className="preview-risk-map-heading"><span>TOP RISK PATH</span><b>严重</b></div>
-              <div className="preview-risk-path">
-                <span><i><Radar size={11} /></i><em><strong>agent</strong><small>agent</small></em></span>
-                <ArrowRight size={12} />
-                <span className="target"><i><TriangleAlert size={11} /></i><em><strong>shell_tool</strong><small>tool</small></em></span>
-              </div>
-              <div className="preview-risk-action">High-Risk Capability Without Policy <ArrowRight size={11} /></div>
-            </div>
-          </section>
-
-          <section className="preview-summary" aria-label="报告摘要">
-            <div className="preview-summary-item risk"><div className="preview-summary-heading"><i><ShieldAlert size={14} /></i><small>风险发现</small><ChevronRight size={12} /></div><div className="preview-summary-body"><strong>11</strong><em>6 严重 · 3 高危</em></div></div>
-            <div className="preview-summary-item components"><div className="preview-summary-heading"><i><Boxes size={14} /></i><small>AgentBOM 组件</small><ChevronRight size={12} /></div><div className="preview-summary-body"><strong>4</strong><em>1 Agent · 1 Tool</em></div></div>
-            <div className="preview-summary-item graph"><div className="preview-summary-heading"><i><Route size={14} /></i><small>调用图关系</small><ChevronRight size={12} /></div><div className="preview-summary-body"><strong>6</strong><em>6 节点 · 6 语义边</em></div></div>
-          </section>
-
-          <section className="preview-priority">
-            <div className="preview-priority-heading"><span><small>PRIORITY QUEUE</small><strong>优先风险</strong></span><em>查看全部 <ArrowRight size={11} /></em></div>
-            <div className="preview-priority-row"><b>严重</b><span><strong>High-Risk Capability Without Policy</strong><small>agent → shell_tool · app.py</small></span><code>adg.high_risk…</code><ChevronRight size={12} /></div>
-          </section>
-        </div>
-      </div>
-    </div>
-  </figure>
+    </dialog>
+  </>
 }
 
 function QuickstartPage() {
